@@ -1,4 +1,4 @@
-# Perfect Nepali Patro 2082
+# Todo Nepali Patro 2082
 
 ## Description
 Perfect Nepali Patro 2082 is a modern, interactive web-based calendar application designed for the Nepali Bikram Sambat (BS) year 2082. It offers a culturally rich and functional interface to view monthly calendars with accurate start days, mark public holidays, and manage personal tasks. This project is built to assist Nepali users in staying organized while honoring traditional events and managing daily activities.
