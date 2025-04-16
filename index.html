@@ -1,1 +1,503 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>नेपाली पात्रो २०८२ | Nepali Calendar 2082 BS</title>
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --public-holiday-border: #ff4d4d;
+            --saturday-bg: rgba(0, 0, 255, 0.1); /* Transparent blue */
+            --background: #f4f7fa;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .month-section {
+            margin-bottom: 50px;
+        }
+
+        .month {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            transform: perspective(1000px) rotateX(5deg);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .month:hover {
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .month-header h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+
+        .day-header {
+            font-weight: bold;
+            color: #555;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        .day {
+            position: relative;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            height: 100px; /* Uniform height */
+            overflow-y: auto;
+        }
+
+        .day:hover {
+            background: rgba(0, 0, 0, 0.05);
+            transform: scale(1.05);
+        }
+
+        .day.saturday {
+            background: var(--saturday-bg);
+        }
+
+        .day.holiday {
+            border: 2px dotted var(--public-holiday-border);
+        }
+
+        .day.empty {
+            background: transparent;
+        }
+
+        .day .date {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .day .holiday-text {
+            font-size: 0.7rem;
+            color: var(--public-holiday-border);
+            margin-top: 5px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .day .task-list {
+            font-size: 0.7rem;
+            color: #333;
+            margin-top: 5px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .day .task-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .day .task-list li {
+            margin-bottom: 2px;
+        }
+
+        .holiday-list {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .holiday-list ol {
+            list-style: decimal inside;
+        }
+
+        .holiday-list li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .holiday-list li strong {
+            color: var(--public-holiday-border);
+        }
+
+        .task-tooltip {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 100;
+        }
+
+        .task-input {
+            width: 80%;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+
+        .submit-task {
+            padding: 5px 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .month-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+
+            .day {
+                padding: 8px;
+                font-size: 0.9rem;
+                height: 80px;
+            }
+
+            .day .date {
+                font-size: 0.9rem;
+            }
+
+            .day .holiday-text {
+                font-size: 0.6rem;
+            }
+
+            .day .task-list {
+                font-size: 0.6rem;
+            }
+
+            .month-header h2 {
+                font-size: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .day {
+                padding: 6px;
+                font-size: 0.8rem;
+                height: 60px;
+            }
+
+            .day .date {
+                font-size: 0.8rem;
+            }
+
+            .day .holiday-text {
+                font-size: 0.5rem;
+            }
+
+            .day .task-list {
+                font-size: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>नेपाली पात्रो २०८२ | Nepali Patro 2082 BS</h1>
+        <div id="calendar"></div>
+        <div id="task-tooltip" class="task-tooltip">
+            <input type="text" class="task-input" placeholder="Add task">
+            <button class="submit-task">Add</button>
+        </div>
+    </div>
+
+    <script>
+        const nepaliNumerals = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+        function toNepaliNumeral(num) {
+            return num.toString().split('').map(digit => nepaliNumerals[digit]).join('');
+        }
+
+        const months = [
+            { name: 'वैशाख', days: 30, startDay: 1 },    // Starts on Monday
+            { name: 'जेठ', days: 32, startDay: 3 },      // Starts on Wednesday
+            { name: 'असार', days: 31, startDay: 0 },     // Starts on Sunday
+            { name: 'साउन', days: 32, startDay: 3 },     // Starts on Wednesday
+            { name: 'भदौ', days: 31, startDay: 0 },      // Starts on Sunday
+            { name: 'असोज', days: 30, startDay: 3 },     // Starts on Wednesday
+            { name: 'कार्तिक', days: 30, startDay: 5 },  // Starts on Friday
+            { name: 'मंसिर', days: 30, startDay: 0 },    // Starts on Sunday
+            { name: 'पुष', days: 29, startDay: 2 },      // Starts on Tuesday
+            { name: 'माघ', days: 30, startDay: 2 },      // Starts on Tuesday
+            { name: 'फाल्गुन', days: 30, startDay: 5 },  // Starts on Friday
+            { name: 'चैत', days: 30, startDay: 0 }       // Starts on Sunday
+        ];
+
+        const holidays = {
+            'वैशाख': [
+                { date: 1, name: 'नेपाली नयाँ वर्ष/मेष संक्रान्ति/बिस्का जात्रा', shortName: 'नेपाली नयाँ वर्ष', desc: 'नेपालको नयाँ वर्ष, सूर्यको मेष राशिमा प्रवेश र भक्तपुरको बिस्का जात्रा।' },
+                { date: 18, name: 'अन्तर्राष्ट्रिय श्रमिक दिवस', shortName: 'श्रमिक दिवस', desc: 'श्रमिकहरूको सम्मानमा मनाइने दिन।' },
+                { date: 29, name: 'बुद्ध जयन्ती/उभौली पर्व/चण्डी पूर्णिमा/अन्य', shortName: 'बुद्ध जयन्ती', desc: 'गौतम बुद्धको जन्मजयन्ती र किराँत समुदायको उभौली पर्व।' }
+            ],
+            'जेठ': [
+                { date: 15, name: 'गणतन्त्र दिवस', shortName: 'गणतन्त्र दिवस', desc: 'नेपालमा गणतन्त्र स्थापनाको स्मरणमा मनाइने दिन।' }
+            ],
+            'असार': [],
+            'साउन': [
+                { date: 24, name: 'जनै पूर्णिमा/रक्षा बन्धन/क्वाँटी खाने दिन', shortName: 'जनै पूर्णिमा', desc: 'हिन्दूहरूले जनै फेर्ने र रक्षा बन्धन मनाउने दिन।' },
+                { date: 25, name: 'गाईजात्रा/विश्व आदिवासी दिवस', shortName: 'गाईजात्रा', desc: 'नेवार समुदायको गाईजात्रा र विश्व आदिवासीहरूको सम्मान।' },
+                { date: 31, name: 'श्रीकृष्ण जन्माष्टमी/गोरखकाली पूजा', shortName: 'कृष्ण जन्माष्टमी', desc: 'भगवान् कृष्णको जन्मोत्सव र गोरखकाली पूजा।' }
+            ],
+            'भदौ': [
+                { date: 10, name: 'हरितालिका तीज', shortName: 'हरितालिका तीज', desc: 'महिलाहरूले शिवको कृपाको लागि मनाउने उत्सव।' },
+                { date: 15, name: 'राधा जन्मोत्सव/गौरा पर्व', shortName: 'राधा जन्मोत्सव', desc: 'राधाको जन्मोत्सव र पश्चिम नेपालको गौरा पर्व।' },
+                { date: 21, name: 'इन्द्रजात्रा/अनन्त चतुर्दशी व्रत', shortName: 'इन्द्रजात्रा', desc: 'काठमाडौंको इन्द्रजात्रा र अनन्त चतुर्दशी व्रत।' },
+                { date: 30, name: 'नवमी श्राद्ध/जितिया पर्व', shortName: 'जितिया पर्व', desc: 'पितृहरूको सम्झनामा श्राद्ध र मधेशको जितिया पर्व।' }
+            ],
+            'असोज': [
+                { date: 3, name: 'त्रयोदशी श्राद्ध/संविधान दिवस', shortName: 'संविधान दिवस', desc: 'पितृ श्राद्ध र नेपालको संविधान जारी भएको दिन।' },
+                { date: 6, name: 'घटस्थापना/नवरात्र आरम्भ', shortName: 'घटस्थापना', desc: 'दशैंको सुरुवातमा घटस्थापना।' },
+                { date: 13, name: 'फूलपाती', shortName: 'फूलपाती', desc: 'दशैंको सातौं दिन, फूलपाती भित्र्याउने परम्परा।' },
+                { date: 14, name: 'महा अष्टमी/कालरात्रि', shortName: 'महा अष्टमी', desc: 'दुर्गाको पूजा र कालरात्रिको विशेष पूजा।' },
+                { date: 15, name: 'महा नवमी', shortName: 'महा नवमी', desc: 'नवरात्रको नवौं दिन, शक्तिको पूजा।' },
+                { date: 16, name: 'विजया दशमी', shortName: 'विजया दशमी', desc: 'दशैंको मुख्य दिन, टिका र जमरा लगाउने परम्परा।' },
+                { date: 17, name: 'पापकुंश एकादशी', shortName: 'पापकुंश एकादशी', desc: 'एकादशी व्रत, पापबाट मुक्तिको कामना।' },
+                { date: 18, name: 'दशैं बिदा', shortName: 'दशैं बिदा', desc: 'विजया दशमीपछिको बिदा।' }
+            ],
+            'कार्तिक': [
+                { date: 3, name: 'लक्ष्मी पूजा/कुकुर तिहार', shortName: 'लक्ष्मी पूजा', desc: 'तिहारको मुख्य दिन, लक्ष्मी पूजा र कुकुरको सम्मान।' },
+                { date: 4, name: 'तिहार बिदा', shortName: 'तिहार बिदा', desc: 'तिहारको निरन्तर बिदा।' },
+                { date: 5, name: 'गोवर्द्धन पूजा/म्ह पूजा', shortName: 'गोवर्द्धन पूजा', desc: 'गोवर्द्धन पूजा र नेवार समुदायको म्ह पूजा।' },
+                { date: 6, name: 'भाइ टीका/किजा पूजा', shortName: 'भाइ टीका', desc: 'तिहारको अन्तिम दिन, दाजुभाइ-दिदीबहिनीको टीका।' },
+                { date: 7, name: 'तिहार बिदा', shortName: 'तिहार बिदा', desc: 'तिहारको अन्तिम बिदा।' },
+                { date: 10, name: 'छठ पर्व', shortName: 'छठ पर्व', desc: 'मधेश समुदायको प्रमुख पर्व, सूर्यको पूजा।' },
+                { date: 19, name: 'पूर्णिमा व्रत/गुरु नानक जयन्ती', shortName: 'गुरु नानक जयन्ती', desc: 'पूर्णिमा व्रत र सिख समुदायको गुरु नानक जयन्ती।' },
+                { date: 25, name: 'फाल्गुनन्द जयन्ती', shortName: 'फाल्गुनन्द जयन्ती', desc: 'किराँत धर्मगुरु फाल्गुनन्दको जन्मजयन्ती।' }
+            ],
+            'मंसिर': [
+                { date: 17, name: 'अन्तर्राष्ट्रिय अपाङ्गता दिवस', shortName: 'अपाङ्गता दिवस', desc: 'अपाङ्गता भएका व्यक्तिहरूको सम्मानमा मनाइने दिन।' },
+                { date: 18, name: 'पूर्णिमा व्रत/योमारी पुन्ही', shortName: 'योमारी पुन्ही', desc: 'नेवार समुदायको योमारी पुन्ही र पूर्णिमा व्रत।' }
+            ],
+            'पुष': [
+                { date: 10, name: 'क्रिसमस', shortName: 'क्रिसमस', desc: 'इसाई समुदायको प्रमुख पर्व, येशु ख्रीष्टको जन्मदिन।' },
+                { date: 15, name: 'तमु ल्होसार', shortName: 'तमु ल्होसार', desc: 'गुरुङ समुदायको नयाँ वर्ष र ल्होसार पर्व।' },
+                { date: 27, name: 'पृथ्वी जयन्ती/राष्ट्रिय एकता दिवस', shortName: 'पृथ्वी जयन्ती', desc: 'पृथ्वीनारायण शाहको जन्मजयन्ती र राष्ट्रिय एकता।' }
+            ],
+            'माघ': [
+                { date: 1, name: 'मकर संक्रान्ति/घिउ चाकु खाने दिन', shortName: 'मकर संक्रान्ति', desc: 'सूर्यको मकर राशिमा प्रवेश र घिउ-चाकु खाने परम्परा।' },
+                { date: 5, name: 'सोनम ल्होछार', shortName: 'सोनम ल्होछार', desc: 'तामाङ समुदायको नयाँ वर्ष र ल्होछार पर्व।' },
+                { date: 9, name: 'बसन्त पञ्चमी/सरस्वती पूजा', shortName: 'बसन्त पञ्चमी', desc: 'विद्या र ज्ञानकी देवी सरस्वतीको पूजा।' },
+                { date: 16, name: 'शहीद दिवस', shortName: 'शहीद दिवस', desc: 'नेपालका शहीदहरूको सम्झनामा मनाइने दिन।' }
+            ],
+            'फाल्गुन': [
+                { date: 3, name: 'महाशिवरात्रि/सेना दिवस', shortName: 'महाशिवरात्रि', desc: 'शिवको पूजा र नेपाली सेनाको स्थापना दिवस।' },
+                { date: 6, name: 'ग्याल्पो ल्होसार', shortName: 'ग्याल्पो ल्होसार', desc: 'शेर्पा समुदायको नयाँ वर्ष र ल्होसार पर्व।' },
+                { date: 7, name: 'प्रजातन्त्र दिवस', shortName: 'प्रजातन्त्र दिवस', desc: 'नेपालमा प्रजातन्त्र स्थापनाको स्मरणमा मनाइने दिन।' },
+                { date: 18, name: 'फागु पूर्णिमा/होली', shortName: 'होली', desc: 'रंगहरूको पर्व होली र पूर्णिमा व्रत।' },
+                { date: 19, name: 'फागु पूर्णिमा (तराई)', shortName: 'होली (तराई)', desc: 'तराई क्षेत्रमा होलीको दोस्रो दिन।' },
+                { date: 24, name: 'अन्तर्राष्ट्रिय महिला दिवस', shortName: 'महिला दिवस', desc: 'महिलाहरूको सम्मान र समानताको लागि मनाइने दिन।' }
+            ],
+            'चैत': [
+                { date: 4, name: 'घोडे जात्रा', shortName: 'घोडे जात्रा', desc: 'काठमाडौंको टुँडिखेलमा मनाइने घोडा दौडको जात्रा।' },
+                { date: 13, name: 'श्रीराम नवमी व्रत', shortName: 'राम नवमी', desc: 'भगवान् रामको जन्मोत्सव र व्रत।' }
+            ]
+        };
+
+        const calendar = document.getElementById('calendar');
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || {};
+        let currentDate = null;
+        const taskTooltip = document.getElementById('task-tooltip');
+        const taskInput = taskTooltip.querySelector('.task-input');
+        const submitTaskButton = taskTooltip.querySelector('.submit-task');
+
+        months.forEach(month => {
+            const monthSection = document.createElement('div');
+            monthSection.className = 'month-section';
+
+            const monthDiv = document.createElement('div');
+            monthDiv.className = 'month';
+            monthDiv.innerHTML = `
+                <div class="month-header">
+                    <h2>${month.name} २०८२</h2>
+                </div>
+                <div class="month-grid">
+                    <div class="day-header">आइत</div>
+                    <div class="day-header">सोम</div>
+                    <div class="day-header">मंगल</div>
+                    <div class="day-header">बुध</div>
+                    <div class="day-header">बिही</div>
+                    <div class="day-header">शुक्र</div>
+                    <div class="day-header">शनि</div>
+                </div>
+            `;
+            const grid = monthDiv.querySelector('.month-grid');
+
+            for (let i = 0; i < month.startDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'day empty';
+                grid.appendChild(emptyDay);
+            }
+
+            for (let i = 1; i <= month.days; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day';
+                dayDiv.setAttribute('data-month', month.name);
+                dayDiv.setAttribute('data-date', i);
+                const nepaliDate = toNepaliNumeral(i);
+                dayDiv.innerHTML = `<div class="date">${nepaliDate}</div>`;
+
+                const dayOfWeek = (month.startDay + i - 1) % 7;
+                if (dayOfWeek === 6) {
+                    dayDiv.classList.add('saturday');
+                }
+
+                const monthHolidays = holidays[month.name] || [];
+                const holiday = monthHolidays.find(h => h.date === i);
+                if (holiday) {
+                    dayDiv.classList.add('holiday');
+                    const holidayText = document.createElement('div');
+                    holidayText.className = 'holiday-text';
+                    holidayText.textContent = holiday.shortName;
+                    dayDiv.appendChild(holidayText);
+                }
+
+                const taskListDiv = document.createElement('div');
+                taskListDiv.className = 'task-list';
+                dayDiv.appendChild(taskListDiv);
+                updateTaskList(month.name, i, taskListDiv);
+
+                dayDiv.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currentDate = { month: month.name, date: i };
+                    showTaskTooltip(dayDiv);
+                });
+
+                grid.appendChild(dayDiv);
+            }
+
+            monthSection.appendChild(monthDiv);
+
+            const holidayListDiv = document.createElement('div');
+            holidayListDiv.className = 'holiday-list';
+            holidayListDiv.innerHTML = `<h3>${month.name} २०८२ को बिदाहरू</h3>`;
+            const monthHolidays = holidays[month.name] || [];
+            if (monthHolidays.length === 0) {
+                holidayListDiv.innerHTML += '<p>यस महिनामा कुनै पनि बिदा छैन।</p>';
+            } else {
+                const ol = document.createElement('ol');
+                monthHolidays.forEach(holiday => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${holiday.name}</strong> (${holiday.date} ${month.name}): ${holiday.desc}`;
+                    ol.appendChild(li);
+                });
+                holidayListDiv.appendChild(ol);
+            }
+            monthSection.appendChild(holidayListDiv);
+
+            calendar.appendChild(monthSection);
+        });
+
+        function showTaskTooltip(dayDiv) {
+            if (!currentDate) return;
+            const rect = dayDiv.getBoundingClientRect();
+            taskTooltip.style.top = `${rect.bottom + window.scrollY}px`;
+            taskTooltip.style.left = `${rect.left + window.scrollX}px`;
+            taskTooltip.style.display = 'block';
+        }
+
+        function addTask(month, date, task) {
+            const key = `${month}-${date}`;
+            if (!tasks[key]) {
+                tasks[key] = [];
+            }
+            tasks[key].push(task);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            const taskListDiv = document.querySelector(`[data-month="${month}"][data-date="${date}"] .task-list`);
+            updateTaskList(month, date, taskListDiv);
+        }
+
+        function updateTaskList(month, date, taskListDiv) {
+            const key = `${month}-${date}`;
+            taskListDiv.innerHTML = '';
+            const dateTasks = tasks[key] || [];
+            if (dateTasks.length > 0) {
+                const ul = document.createElement('ul');
+                dateTasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.textContent = task;
+                    ul.appendChild(li);
+                });
+                taskListDiv.appendChild(ul);
+            }
+        }
+
+        submitTaskButton.addEventListener('click', () => {
+            const task = taskInput.value.trim();
+            if (task && currentDate) {
+                addTask(currentDate.month, currentDate.date, task);
+                taskInput.value = '';
+                taskTooltip.style.display = 'none';
+            }
+        });
+
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitTaskButton.click();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!taskTooltip.contains(e.target) && !e.target.closest('.day')) {
+                taskTooltip.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
